@@ -28,11 +28,13 @@ ifeq ($(origin AR), default)
   AR = ar
 endif
 RESCOMP = windres
-INCLUDES += -Isrc -Iinclude -Ibuild/external/raylib-master/src
+INCLUDES += -Ibuild/external/raylib-master/src -Ibuild/external/raylib-master/src/external/glfw/include
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
+LIBS +=
+LDDEPS +=
+LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
 define PREBUILDCMDS
 endef
 define PRELINKCMDS
@@ -42,68 +44,56 @@ endef
 
 ifeq ($(config),debug_x64)
 TARGETDIR = bin/Debug
-TARGET = $(TARGETDIR)/raylib_mouse_drag_example
-OBJDIR = obj/x64/Debug/raylib_mouse_drag_example
+TARGET = $(TARGETDIR)/libraylib.a
+OBJDIR = obj/x64/Debug/raylib
 DEFINES += -DDEBUG -DPLATFORM_DESKTOP -DGRAPHICS_API_OPENGL_33 -D_GLFW_X11
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -Wshadow -g -std=c23
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -Wshadow -g -std=c++20
-LIBS += bin/Debug/libraylib.a -lpthread -lm -ldl -lrt -lX11
-LDDEPS += bin/Debug/libraylib.a
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
 
 else ifeq ($(config),debug_x86)
 TARGETDIR = bin/Debug
-TARGET = $(TARGETDIR)/raylib_mouse_drag_example
-OBJDIR = obj/x86/Debug/raylib_mouse_drag_example
+TARGET = $(TARGETDIR)/libraylib.a
+OBJDIR = obj/x86/Debug/raylib
 DEFINES += -DDEBUG -DPLATFORM_DESKTOP -DGRAPHICS_API_OPENGL_33 -D_GLFW_X11
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -Wshadow -g -std=c23
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -Wshadow -g -std=c++20
-LIBS += bin/Debug/libraylib.a -lpthread -lm -ldl -lrt -lX11
-LDDEPS += bin/Debug/libraylib.a
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -g
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -g
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib32 -m32
 
 else ifeq ($(config),debug_arm64)
 TARGETDIR = bin/Debug
-TARGET = $(TARGETDIR)/raylib_mouse_drag_example
-OBJDIR = obj/ARM64/Debug/raylib_mouse_drag_example
+TARGET = $(TARGETDIR)/libraylib.a
+OBJDIR = obj/ARM64/Debug/raylib
 DEFINES += -DDEBUG -DPLATFORM_DESKTOP -DGRAPHICS_API_OPENGL_33 -D_GLFW_X11
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -Wshadow -g -std=c23
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -Wshadow -g -std=c++20
-LIBS += bin/Debug/libraylib.a -lpthread -lm -ldl -lrt -lX11
-LDDEPS += bin/Debug/libraylib.a
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g
 ALL_LDFLAGS += $(LDFLAGS)
 
 else ifeq ($(config),release_x64)
 TARGETDIR = bin/Release
-TARGET = $(TARGETDIR)/raylib_mouse_drag_example
-OBJDIR = obj/x64/Release/raylib_mouse_drag_example
+TARGET = $(TARGETDIR)/libraylib.a
+OBJDIR = obj/x64/Release/raylib
 DEFINES += -DNDEBUG -DPLATFORM_DESKTOP -DGRAPHICS_API_OPENGL_33 -D_GLFW_X11
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -Wshadow -O2 -std=c23
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -Wshadow -O2 -std=c++20
-LIBS += bin/Release/libraylib.a -lpthread -lm -ldl -lrt -lX11
-LDDEPS += bin/Release/libraylib.a
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -s
 
 else ifeq ($(config),release_x86)
 TARGETDIR = bin/Release
-TARGET = $(TARGETDIR)/raylib_mouse_drag_example
-OBJDIR = obj/x86/Release/raylib_mouse_drag_example
+TARGET = $(TARGETDIR)/libraylib.a
+OBJDIR = obj/x86/Release/raylib
 DEFINES += -DNDEBUG -DPLATFORM_DESKTOP -DGRAPHICS_API_OPENGL_33 -D_GLFW_X11
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -Wshadow -O2 -std=c23
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -Wshadow -O2 -std=c++20
-LIBS += bin/Release/libraylib.a -lpthread -lm -ldl -lrt -lX11
-LDDEPS += bin/Release/libraylib.a
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -O2
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -O2
 ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib32 -m32 -s
 
 else ifeq ($(config),release_arm64)
 TARGETDIR = bin/Release
-TARGET = $(TARGETDIR)/raylib_mouse_drag_example
-OBJDIR = obj/ARM64/Release/raylib_mouse_drag_example
+TARGET = $(TARGETDIR)/libraylib.a
+OBJDIR = obj/ARM64/Release/raylib
 DEFINES += -DNDEBUG -DPLATFORM_DESKTOP -DGRAPHICS_API_OPENGL_33 -D_GLFW_X11
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -Wshadow -O2 -std=c23
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -Wshadow -O2 -std=c++20
-LIBS += bin/Release/libraylib.a -lpthread -lm -ldl -lrt -lX11
-LDDEPS += bin/Release/libraylib.a
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O2
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -O2
 ALL_LDFLAGS += $(LDFLAGS) -s
 
 endif
@@ -118,8 +108,20 @@ endif
 GENERATED :=
 OBJECTS :=
 
-GENERATED += $(OBJDIR)/main.o
-OBJECTS += $(OBJDIR)/main.o
+GENERATED += $(OBJDIR)/raudio.o
+GENERATED += $(OBJDIR)/rcore.o
+GENERATED += $(OBJDIR)/rglfw.o
+GENERATED += $(OBJDIR)/rmodels.o
+GENERATED += $(OBJDIR)/rshapes.o
+GENERATED += $(OBJDIR)/rtext.o
+GENERATED += $(OBJDIR)/rtextures.o
+OBJECTS += $(OBJDIR)/raudio.o
+OBJECTS += $(OBJDIR)/rcore.o
+OBJECTS += $(OBJDIR)/rglfw.o
+OBJECTS += $(OBJDIR)/rmodels.o
+OBJECTS += $(OBJDIR)/rshapes.o
+OBJECTS += $(OBJDIR)/rtext.o
+OBJECTS += $(OBJDIR)/rtextures.o
 
 # Rules
 # #############################################
@@ -129,7 +131,7 @@ all: $(TARGET)
 
 $(TARGET): $(GENERATED) $(OBJECTS) $(LDDEPS) | $(TARGETDIR)
 	$(PRELINKCMDS)
-	@echo Linking raylib_mouse_drag_example
+	@echo Linking raylib
 	$(SILENT) $(LINKCMD)
 	$(POSTBUILDCMDS)
 
@@ -150,7 +152,7 @@ else
 endif
 
 clean:
-	@echo Cleaning raylib_mouse_drag_example
+	@echo Cleaning raylib
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) rm -f  $(TARGET)
 	$(SILENT) rm -rf $(GENERATED)
@@ -168,7 +170,7 @@ ifneq (,$(PCH))
 $(OBJECTS): $(GCH) | $(PCH_PLACEHOLDER)
 $(GCH): $(PCH) | prebuild
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) -x c++-header $(ALL_CXXFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
+	$(SILENT) $(CC) -x c-header $(ALL_CFLAGS) -o "$@" -MF "$(@:%.gch=%.d)" -c "$<"
 $(PCH_PLACEHOLDER): $(GCH) | $(OBJDIR)
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) touch "$@"
@@ -183,7 +185,25 @@ endif
 # File Rules
 # #############################################
 
-$(OBJDIR)/main.o: src/main.c
+$(OBJDIR)/raudio.o: build/external/raylib-master/src/raudio.c
+	@echo "$(notdir $<)"
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/rcore.o: build/external/raylib-master/src/rcore.c
+	@echo "$(notdir $<)"
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/rglfw.o: build/external/raylib-master/src/rglfw.c
+	@echo "$(notdir $<)"
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/rmodels.o: build/external/raylib-master/src/rmodels.c
+	@echo "$(notdir $<)"
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/rshapes.o: build/external/raylib-master/src/rshapes.c
+	@echo "$(notdir $<)"
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/rtext.o: build/external/raylib-master/src/rtext.c
+	@echo "$(notdir $<)"
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/rtextures.o: build/external/raylib-master/src/rtextures.c
 	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 

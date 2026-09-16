@@ -30,9 +30,10 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example -  mouse drag ");
 
-    Rectangle boxRect = { screenWidth/2 - 40, screenHeight/2 - 40, 80.0f, 120.0f };
+    Rectangle boxRect = { screenWidth/2 - 40, screenHeight/2 - 40, 80.0f, 80.0f };
     Rectangle boxScaled = boxRect;           // BoxRect with scale applied
-    Color boxColor = RED;
+    Rectangle innerArea = { 300.0f, 300.0f, 70.0f, 70.0f };   
+    Rectangle outerArea = { 290.0f, 290.0f, 90.0f, 90.0f };   
     bool pickedUp = false;
     Vector2 mouseOffset = { 0.0f, 0.0f };    // Stores the offset of the mouse relative to the box's position
     float boxScale = 1.0f;
@@ -50,6 +51,7 @@ int main(void)
         //----------------------------------------------------------------------------------
         Vector2 mousePosition = GetMousePosition();
         float wheelMove = GetMouseWheelMove();
+        bool placed = false;
 
         // Input
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mousePosition, boxScaled)) {
@@ -69,6 +71,14 @@ int main(void)
             boxScale = Clamp(boxScale + wheelMove*scallingSpeed, minScale, maxScale);
         }
 
+        Rectangle innerCol = GetCollisionRec(innerArea, boxScaled);
+        Rectangle outerCol = GetCollisionRec(outerArea, boxScaled);
+        if (innerCol.width == innerArea.width && innerCol.height == innerArea.height) {
+            if (outerCol.width == boxRect.width && outerCol.height == outerCol.height) {
+               placed = true;
+            }
+        }
+
         boxScaled.width = boxRect.width * boxScale;
         boxScaled.height = boxRect.height * boxScale;
         boxScaled.x = boxRect.x - boxRect.width*(boxScale - 1)/2;
@@ -80,7 +90,10 @@ int main(void)
 
             ClearBackground(RAYWHITE);
 
-            DrawRectangleRec(boxScaled, boxColor);
+            DrawRectangleLinesEx(outerArea, 2.0f, placed ? GREEN : RED);
+            DrawRectangleRec(innerArea, YELLOW);
+
+            DrawRectangleRec(boxScaled, BROWN);
 
             DrawText("Use mouse to drag and drop the box and mouse wheel to scale!", 10, 10, 20, GRAY);
             DrawText(TextFormat("Box scale: %.2f", boxScale), 10, 40, 20, LIGHTGRAY);
