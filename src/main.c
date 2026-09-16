@@ -1,23 +1,22 @@
 /*******************************************************************************************
 *
-*   raylib [<module>] example - <name/short description>
+*   raylib [core] example - mouse drag and scaling
 *
 *   Example complexity rating: [★☆☆☆] 1/4
 *
-*   Example originally created with raylib 5.5, last time updated with raylib 5.6
+*   Example originally created with raylib 6.0, last time updated with raylib 6.0
 *
-*   Example contributed by <author_name> (@<user_github>) and reviewed by Ramon Santamaria (@raysan5)
+*   Example contributed by Gabriel Piangers (@gabriel-piangers) and reviewed by Ramon Santamaria (@raysan5)
 *
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright (c) <year_created>-<year_updated> <author_name> (@<user_github>)
+*   Copyright (c) 2026-2026 Gabriel Piangers (@gabriel-piangers)
 *
 ********************************************************************************************/
 
 #include "raylib.h"
 #include "raymath.h"
-#include "resource_dir.h" // remove later
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -29,7 +28,7 @@ int main(void)
     const int screenWidth = 800;
     const int screenHeight = 450;
 
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - 2D Mouse dragging ");
+    InitWindow(screenWidth, screenHeight, "raylib [core] example -  mouse drag ");
 
     Rectangle boxRect = { screenWidth/2 - 40, screenHeight/2 - 40, 80.0f, 120.0f };
     Rectangle boxScaled = boxRect;           // BoxRect with scale applied
