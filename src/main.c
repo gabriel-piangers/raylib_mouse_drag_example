@@ -74,30 +74,23 @@ int main(void)
         bool circPlaced = false;
         bool triPlaced = false;
 
-        if(IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
-            printf("%.2f, %.2f\n", mousePosition.x, mousePosition.y);
-        }
-
-        // Rectangle input
+        // Detect object pickup input
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mousePosition, rec)) {
             recPickedUp = true;
             mouseOffset = (Vector2) { rec.x - mousePosition.x, rec.y - mousePosition.y };
-        } else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && recPickedUp) {
-            recPickedUp = false;
-        }
-
-        // Circle input
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointCircle(mousePosition, circ.center, circ.radius)) {
+        } else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointCircle(mousePosition, circ.center, circ.radius)) {
             circPickedUp = true;
             mouseOffset = (Vector2) { circ.center.x - mousePosition.x, circ.center.y - mousePosition.y };
-        } else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && circPickedUp) {
-            circPickedUp = false;
-        }
-
-        // Triangle input
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointTriangle(mousePosition, tri.v1, tri.v2, tri.v3)) {
+        } else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointTriangle(mousePosition, tri.v1, tri.v2, tri.v3)) {
             triPickedUp = true;
             mouseOffset = (Vector2) { tri.v1.x - mousePosition.x, tri.v1.y - mousePosition.y }; // Uses v1 as the pivot point
+        }
+        
+        // Detect object drop input
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && recPickedUp) {
+            recPickedUp = false;
+        } else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && circPickedUp) {
+            circPickedUp = false;
         } else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && triPickedUp) {
             triPickedUp = false;
         }
@@ -149,9 +142,15 @@ int main(void)
             DrawCircleLinesEx(circArea.center, circArea.radius, 2.0f, circPlaced ? GREEN : RED);
             DrawTriangleLinesEx(triArea.v1, triArea.v2, triArea.v3, 2.0f, triPlaced ? GREEN : RED);
 
-            DrawRectangleRec(rec, ORANGE);
-            DrawCircleV(circ.center, circ.radius, BLUE);
-            DrawTriangle(tri.v1, tri.v2, tri.v3, VIOLET);
+            // Draws objects that are not picked up first
+            if (!triPickedUp) DrawTriangle(tri.v1, tri.v2, tri.v3, VIOLET);
+            if (!circPickedUp) DrawCircleV(circ.center, circ.radius, BLUE);
+            if (!recPickedUp) DrawRectangleRec(rec, ORANGE);
+
+            // Draws the object that is being dragged on top of others
+            if (triPickedUp) DrawTriangle(tri.v1, tri.v2, tri.v3, VIOLET);
+            if (circPickedUp) DrawCircleV(circ.center, circ.radius, BLUE);
+            if (recPickedUp) DrawRectangleRec(rec, ORANGE);
 
             DrawText("Use mouse to drag and drop the objects into the right spot!", 10, 10, 20, GRAY);
         EndDrawing();
